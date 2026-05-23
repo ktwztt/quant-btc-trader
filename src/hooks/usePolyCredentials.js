@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 
 const STORAGE_KEY = 'quant_poly_creds';
+const TRADE_API = import.meta.env.VITE_TRADE_API_URL || '/api/trade';
 
 function loadCreds() {
   try {
@@ -45,7 +46,7 @@ export function usePolyCredentials() {
 
   const testConnection = useCallback(async () => {
     try {
-      const res = await fetch('/api/trade?action=market', {
+      const res = await fetch(`${TRADE_API}?action=market`, {
         headers: { 'X-Poly-Creds': JSON.stringify(creds) },
       });
       const data = await res.json();

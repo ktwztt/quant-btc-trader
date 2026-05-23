@@ -37,7 +37,24 @@ if os.path.exists(env_path):
 
 
 class LocalHandler(TradeHandler):
-    """路由 /api/auth 到本地认证，/api/trade 到 Polymarket 交易。"""
+    """路由 /api/auth 到本地认证，/api/trade 到 Polymarket 交易。支持 CORS。"""
+
+    def _cors_headers(self):
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, X-Poly-Creds")
+
+    def do_OPTIONS(self):
+        self.send_response(204)
+        self._cors_headers()
+        self.end_headers()
+
+    def _json_response(self, code, data):
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json")
+        self._cors_headers()
+        self.end_headers()
+        self.wfile.write(json.dumps(data).encode())
 
     def do_POST(self):
         parsed = urlparse(self.path)
@@ -49,30 +66,18 @@ class LocalHandler(TradeHandler):
                 password = data.get("password", "")
                 expected = os.environ.get("ACCESS_PASSWORD", "")
                 if expected and password == expected:
-                    self.send_response(200)
-                    self.send_header("Content-Type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(json.dumps({"ok": True}).encode())
+                    self._json_response(200, {"ok": True})
                 else:
-                    self.send_response(401)
-                    self.send_header("Content-Type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(json.dumps({"error": "密码错误"}).encode())
+                    self._json_response(401, {"error": "密码错误"})
             except Exception as e:
-                self.send_response(400)
-                self.send_header("Content-Type", "application/json")
-                self.end_headers()
-                self.wfile.write(json.dumps({"error": str(e)}).encode())
+                self._json_response(400, {"error": str(e)})
         else:
             super().do_POST()
 
     def do_GET(self):
         parsed = urlparse(self.path)
         if parsed.path == "/api/auth":
-            self.send_response(405)
-            self.send_header("Content-Type", "application/json")
-            self.end_headers()
-            self.wfile.write(json.dumps({"error": "Method not allowed"}).encode())
+            self._json_response(405, {"error": "Method not allowed"})
         else:
             super().do_GET()
 

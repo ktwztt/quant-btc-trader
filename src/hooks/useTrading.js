@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 
 const STORAGE_KEY = 'quant_poly_trades';
 const MAX_TRADES = 100;
+const TRADE_API = import.meta.env.VITE_TRADE_API_URL || '/api/trade';
 
 function loadTrades() {
   try {
@@ -34,7 +35,7 @@ export function useTrading(currentPrice, market, polyCreds) {
     setLastError(null);
 
     try {
-      const res = await fetch('/api/trade', {
+      const res = await fetch(TRADE_API, {
         method: 'POST',
         headers: polyHeaders(),
         body: JSON.stringify({
@@ -78,7 +79,7 @@ export function useTrading(currentPrice, market, polyCreds) {
 
   const checkOrderStatus = useCallback(async (orderId) => {
     try {
-      const res = await fetch(`/api/trade?action=status&orderId=${orderId}`, {
+      const res = await fetch(`${TRADE_API}?action=status&orderId=${orderId}`, {
         headers: polyHeaders(),
       });
       const data = await res.json();
@@ -90,7 +91,7 @@ export function useTrading(currentPrice, market, polyCreds) {
 
   const cancelOrder = useCallback(async (orderId) => {
     try {
-      const res = await fetch('/api/trade', {
+      const res = await fetch(TRADE_API, {
         method: 'POST',
         headers: polyHeaders(),
         body: JSON.stringify({ action: 'cancel', orderId }),
