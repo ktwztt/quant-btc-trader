@@ -1,0 +1,11 @@
+node_modules
+.git
+.env
+.env.*
+*.md
+src/
+public/
+vite.config.js
+package*.json
+tailwind.config.js
+postcss.config.js
