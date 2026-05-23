@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: quant-btc-api
+    runtime: python
+    region: singapore
+    plan: free
+    buildCommand: pip install -r api/requirements.txt
+    startCommand: python server.py $PORT
+    envVars:
+      - key: ACCESS_PASSWORD
+        sync: false
+      - key: POLY_PROXY_URL
+        sync: false
