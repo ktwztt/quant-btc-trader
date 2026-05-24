@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 
 const STORAGE_KEY = 'quant_poly_creds';
-const TRADE_API = import.meta.env.VITE_TRADE_API_URL || '/api/trade';
+const TRADE_API = 'http://156.226.176.170:8080/api/trade';
 
 function loadCreds() {
   try {
