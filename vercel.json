@@ -3,8 +3,7 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
-    { "source": "/api/trade", "destination": "http://156.226.176.170:8080/api/trade" },
-    { "source": "/api/(auth)", "destination": "/api/$1" },
+    { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/((?!api/).*)", "destination": "/" }
   ]
 }
